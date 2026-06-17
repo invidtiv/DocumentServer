@@ -27,7 +27,7 @@ PUSH=0
 usage() {
     echo "Usage: $0 [-b BUILD_NUMBER] [-p PRE_ID] [--dry-run] [--push]"
     echo ""
-    echo "Tags the main repo and all submodules with vVERSION[-PRE_ID].BUILD_NUMBER"
+    echo "Tags the main repo and all submodules with vVERSION[-PRE_ID]+BUILD_NUMBER"
     echo ""
     echo "Options:"
     echo "  -b, --build BUILD_NUMBER   Build number (default: last build + 1)"
@@ -66,11 +66,12 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Build the tag prefix. With a pre-release id it's "vX.Y.Z-ID.", without it "vX.Y.Z-".
+# Build the tag prefix. With a pre-release id it's "vX.Y.Z-ID+", without it "vX.Y.Z+".
+# Build metadata is separated by "+" per semver.org.
 if [ -n "$PRE_ID" ]; then
-    TAG_PREFIX="v${VERSION}-${PRE_ID}."
+    TAG_PREFIX="v${VERSION}-${PRE_ID}+"
 else
-    TAG_PREFIX="v${VERSION}-"
+    TAG_PREFIX="v${VERSION}+"
 fi
 
 if [ -z "$BUILD_NUMBER" ]; then
