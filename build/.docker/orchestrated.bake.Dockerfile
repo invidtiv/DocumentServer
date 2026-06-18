@@ -250,7 +250,7 @@ FROM ds-base AS docs
     CMD ["docservice"]
 
 
-FROM node:20-alpine3.19 AS example
+FROM node:22-alpine3.19 AS example
     LABEL maintainer Euro-Office
 
     ENV LANG=en_US.UTF-8 \
