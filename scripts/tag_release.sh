@@ -10,7 +10,10 @@ if [ ! -f "$VERSION_FILE" ]; then
     exit 1
 fi
 
-VERSION="$(cat "$VERSION_FILE" | tr -d '[:space:]')"
+VERSION_FILE_CONTENT="$(cat "$VERSION_FILE" | tr -d '[:space:]')"
+
+# Strip optional suffix (e.g. -rc.1)
+VERSION="${VERSION_FILE_CONTENT%%-*}"
 
 # Validate semver format (major.minor.patch)
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -66,12 +69,12 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Build the tag prefix. With a pre-release id it's "vX.Y.Z-ID+", without it "vX.Y.Z+".
+# Build the tag prefix. With a pre-release id it's "vX.Y.Z-ID+", without it "vX.Y.Z".
 # Build metadata is separated by "+" per semver.org.
 if [ -n "$PRE_ID" ]; then
-    TAG_PREFIX="v${VERSION}-${PRE_ID}+"
+    TAG_PREFIX="v${VERSION}-${PRE_ID}"
 else
-    TAG_PREFIX="v${VERSION}+"
+    TAG_PREFIX="v${VERSION}"
 fi
 
 if [ -z "$BUILD_NUMBER" ]; then
@@ -83,7 +86,7 @@ if [ -z "$BUILD_NUMBER" ]; then
         | sort -n \
         | tail -1)
     if [ -z "$LAST_BUILD" ]; then
-        BUILD_NUMBER=1
+        BUILD_NUMBER=0
     else
         BUILD_NUMBER=$((LAST_BUILD + 1))
     fi
@@ -91,11 +94,15 @@ if [ -z "$BUILD_NUMBER" ]; then
 fi
 
 if ! [[ "$BUILD_NUMBER" =~ ^[0-9]+$ ]]; then
-    echo "ERROR: Build number must be a positive integer"
+    echo "ERROR: Build number must be a positive integer (or zero)"
     exit 1
 fi
 
-TAG="${TAG_PREFIX}${BUILD_NUMBER}"
+if [ $BUILD_NUMBER -eq 0 ]; then
+    TAG="${TAG_PREFIX}"
+else
+    TAG="${TAG_PREFIX}+${BUILD_NUMBER}"
+fi
 
 tag_repo() {
     local repo_path="$1"
