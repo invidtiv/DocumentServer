@@ -79,6 +79,11 @@ jobs:
           branch: chore/nightly-submodule-bump
           base: main
           delete-branch: true
-          commit-message: "chore: update submodules to latest main branch"
+          author: "Euro-Office via GitHub Actions <actions@github.com>"
+          committer: "Euro-Office via GitHub Actions <actions@github.com>"
+          commit-message: |
+            chore: update submodules to latest main branch
+
+            Signed-off-by: Euro-Office via GitHub Actions <actions@github.com>
           title: "chore: update submodules to latest main branch"
           body-path: ${{ runner.temp }}/pr-body.md
