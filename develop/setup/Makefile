@@ -15,8 +15,8 @@ WEBAPPS_FLAGS :=
 # Must match the DocumentServer version reported by the SDK (asc_getBuildVersion).
 # onServerVersion() blocks asc_LoadDocument() when there is a mismatch, causing
 # a permanent skeleton UI.  Override on the command line when upgrading the container:
-#   PRODUCT_VERSION=9.3.0 make web-apps-dev
-PRODUCT_VERSION ?= 9.2.1
+#   PRODUCT_VERSION=9.4.0 make web-apps-dev
+PRODUCT_VERSION ?= $(shell cat $(EO_DEV)/VERSION)
 
 # Pass SKIP_MOBILE=1 to skip framework7-react mobile builds (~50s saved).
 # Useful when iterating on desktop editor JS/CSS only.
