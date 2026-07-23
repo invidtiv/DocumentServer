@@ -62,6 +62,13 @@ RUN apt-get update && \
 COPY build/configs/standalone/supervisor/ /etc/supervisor/conf.d/
 COPY --chmod=755 build/scripts/standalone/entrypoint.sh /entrypoint.sh
 
+# Give the 'ds' service user a writable HOME. supervisord runs as root and does
+# not reset HOME when dropping to user=ds, so without this the node services
+# inherit HOME=/root and fail to write their cache (e.g. sharp/pkg extracting
+# native modules to ~/.cache), disabling image processing. HOME is set per
+# program in the supervisor confs; this just ensures the directory exists.
+RUN mkdir -p /home/ds && chown ds:ds /home/ds
+
 #RUN mkdir -p ${EO_LOG}/docservice ${EO_LOG}/converter \
 #             ${EO_LOG}/adminpanel ${EO_LOG}/metrics
 
